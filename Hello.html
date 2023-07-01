@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Webhook Spammer</title>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <style>
+    body {
+      background-image: url('https://cdn.discordapp.com/attachments/1124725594786111569/1124732114764570654/download.jpg');
+      background-repeat: no-repeat;
+      background-size: cover;
+    }
+  </style>
+</head>
+<body>
+  <h2>Webhook Spammer</h2>
+  <label for="webhook-url1">Webhook URL 1:</label>
+  <input type="text" id="webhook-url1"><br><br>
+  <label for="webhook-url2">Webhook URL 2:</label>
+  <input type="text" id="webhook-url2"><br><br>
+  <label for="webhook-url3">Webhook URL 3:</label>
+  <input type="text" id="webhook-url3"><br><br>
+  <label for="webhook-url4">Webhook URL 4:</label>
+  <input type="text" id="webhook-url4"><br><br>
+  <label for="message">Custom Message:</label>
+  <input type="text" id="message" maxlength="2000"><br><br>
+  <button id="toggle-button">Change Color LOL</button>
+  <button id="spam-button">Spam Webhook</button>
+  <button id="stop-button" style="display: none;">Stop Spam</button>
+
+  <script>
+    var webhookInterval;
+
+    $(document).ready(function() {
+      var colorToggled = false;
+
+      $('#toggle-button').click(function() {
+        toggleColor();
+      });
+
+      $('#spam-button').click(function() {
+        startSpamWebhook();
+      });
+
+      $('#stop-button').click(function() {
+        stopSpamWebhook();
+      });
+
+      function toggleColor() {
+        if (colorToggled) {
+          $('body').css('background-color', 'white');
+          colorToggled = false;
+        } else {
+          $('body').css('background-color', 'green');
+          colorToggled = true;
+        }
+      }
+
+      function startSpamWebhook() {
+        var webhookUrl1 = $('#webhook-url1').val();
+        var webhookUrl2 = $('#webhook-url2').val();
+        var webhookUrl3 = $('#webhook-url3').val();
+        var webhookUrl4 = $('#webhook-url4').val();
+        var message = $('#message').val();
+
+        if (message.length > 2000) {
+          alert('Custom message exceeds the maximum character limit of 2000.');
+          return;
+        }
+
+        webhookInterval = setInterval(function() {
+          sendWebhookMessage(webhookUrl1, message);
+          sendWebhookMessage(webhookUrl2, message);
+          sendWebhookMessage(webhookUrl3, message);
+          sendWebhookMessage(webhookUrl4, message);
+        }, 1000);
+
+        $('#spam-button').hide();
+        $('#stop-button').show();
+      }
+
+      function stopSpamWebhook() {
+        clearInterval(webhookInterval);
+        $('#stop-button').hide();
+        $('#spam-button').show();
+      }
+
+      function sendWebhookMessage(webhookUrl, message) {
+        var payload = {
+          username: 'Webhook Spammer',
+          content: message
+        };
+
+        $.ajax({
+          url: webhookUrl,
+          type: 'POST',
+          data: JSON.stringify(payload),
+          contentType: 'application/json',
+          success: function(response) {
+            console.log('Webhook message sent successfully to: ' + webhookUrl);
+          },
+          error: function(error) {
+            console.error('Failed to send webhook message to: ' + webhookUrl, error);
+          }
+        });
+      }
+    });
+  </script>
+</body>
+</html>
